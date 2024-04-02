@@ -148,8 +148,8 @@ app.get("/user/followers", authenticateToken, async (request, response) => {
   const query = `
   SELECT user.name FROM user
   INNER JOIN follower
-  ON user.user_id=follower.following_user_id
-  WHERE follower.follower_user_id='${userId}'`;
+  ON user.user_id=follower.follower_user_id
+  WHERE follower.following_user_id='${userId}'`;
   const responseArr = await db.all(query);
   response.send(
     responseArr.map((item) => ({
@@ -312,8 +312,8 @@ app.delete("/tweets/:tweetId", authenticateToken, async (request, response) => {
   const userId = responseUser.user_id;
   const ifValidQuery = `
   SELECT follower.following_user_id 
-  FROM follower INNER JOIN tweet ON follower.following_user_id=tweet.user_id
-  WHERE follower.follower_user_id='${userId}' and tweet.tweet_id='${tweetId}'`;
+  FROM follower INNER JOIN tweet ON follower.follower_user_id=tweet.user_id
+  WHERE follower.following_user_id='${userId}' and tweet.tweet_id='${tweetId}'`;
   const validUsers = await db.all(ifValidQuery);
   if (validUsers !== undefined) {
     response.status(401);
