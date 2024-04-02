@@ -270,13 +270,10 @@ app.get("/user/tweets", authenticateToken, async (request, response) => {
   const responseUser = await db.get(getUserId);
   const userId = responseUser.user_id;
   const query = `
-  SELECT tweet.tweet,likes AS SUM(like.like_id),
-  replies AS SUM(reply_id),tweet.date_time 
-  FROM tweet 
-  INNER JOIN like
-  ON tweet.user_id=like.user_id
-  INNER JOIN reply 
-  ON tweet.user_id = reply.user_id
+  SELECT tweet.tweet_id,tweet.tweet,(SELECT COUNT(*) FROM like WHERE like.tweet_id=tweet.tweet_id) AS likes,
+  (SELECT COUNT(*) FROM reply WHERE reply.tweet_id=tweet.tweet_id) AS replies,
+  tweet.date_time 
+  FROM tweet
   WHERE tweet.user_id='${userId}'`;
   const responseArr = await db.all(query);
   response.send(
